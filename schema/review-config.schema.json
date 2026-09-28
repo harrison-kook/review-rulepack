@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://review-rulepack/schema/review-config.schema.json",
+  "title": "ReviewConfig",
+  "description": "레포 루트의 .review.yml 스키마",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rulepack", "profiles", "mode"],
+  "properties": {
+    "rulepack": {
+      "type": "string",
+      "description": "룰팩 저장소와 버전 태그 (예: our-org/review-rulepack@v1.2.0)",
+      "pattern": "^[^@]+@v[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "profiles": {
+      "type": "array",
+      "description": "적용할 룰팩 프로파일. 병합 순서는 배열 순서를 따른다 (뒤가 앞을 덮어씀)",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["diff", "full"]
+    },
+    "include": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "리뷰 대상에 포함할 glob 패턴"
+    },
+    "exclude": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "리뷰 대상에서 제외할 glob 패턴"
+    },
+    "overrides": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "disable": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^(SEC|ERR|LAY|JPA|PAY|STYLE|TEAM)-[0-9]{3}$" },
+          "description": "완전히 비활성화할 규칙 ID 목록"
+        }
+      },
+      "patternProperties": {
+        "^(SEC|ERR|LAY|JPA|PAY|STYLE|TEAM)-[0-9]{3}$": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "severity": {
+              "type": "string",
+              "enum": ["HIGH", "MEDIUM", "LOW", "INFO"]
+            }
+          }
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_diff_lines": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "초과 시 요약 리뷰로 전환"
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fail_on": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW"],
+          "description": "지정한 심각도 이상 위반 발견 시 CI 체크 실패"
+        }
+      }
+    }
+  }
+}

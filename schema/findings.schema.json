@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://review-rulepack/schema/findings.schema.json",
+  "title": "Findings",
+  "description": "reviewer 에이전트 및 결정적 도구가 생성하는 Finding 배열의 표준 스키마",
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/finding"
+  },
+  "definitions": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ruleId",
+        "severity",
+        "source",
+        "file",
+        "line",
+        "message",
+        "evidence",
+        "fingerprint"
+      ],
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "description": "룰팩에 정의된 규칙 ID (예: JPA-003)",
+          "pattern": "^(SEC|ERR|LAY|JPA|PAY|STYLE|TEAM)-[0-9]{3}$"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "source": {
+          "type": "string",
+          "enum": ["LLM", "CHECKSTYLE", "PMD", "SPOTBUGS", "TEST"]
+        },
+        "file": {
+          "type": "string",
+          "description": "레포 루트 기준 상대 경로"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1,
+          "description": "지적의 근거가 되는 실제 코드 조각. 비어 있으면 렌더링 전 자동 폐기 대상"
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "개선 제안 (선택)"
+        },
+        "fingerprint": {
+          "type": "string",
+          "description": "sha1(ruleId + file + normalizedEvidence), 중복 제거용"
+        }
+      }
+    }
+  }
+}
