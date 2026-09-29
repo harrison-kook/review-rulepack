@@ -9,9 +9,9 @@
 review-rulepack/
 ├── CLAUDE.md              # 공통 행동 지침 (톤, 출력 형식, 금지사항)
 ├── rules/                 # 리뷰 규칙 (common → java-spring → domain → team)
-├── testcases/             # 테스트 시나리오 (tester 에이전트, 2단계용)
-├── agents/                # reviewer(1단계) / tester(2단계 스텁) 서브에이전트 정의
-├── commands/               # /review(1단계) / /gen-test(2단계 스텁)
+├── testcases/             # 테스트 시나리오 (tester 에이전트가 소비)
+├── agents/                # reviewer / tester 서브에이전트 정의
+├── commands/               # /review / /gen-test
 ├── schema/                # findings.schema.json, review-config.schema.json
 └── report-template.md     # Markdown 리포트 렌더링 템플릿
 ```
@@ -34,5 +34,8 @@ review-rulepack/
 
 ## 현재 단계
 
-로드맵 1단계: `rules/`, `agents/reviewer.md`, `commands/review.md`, `schema/` 구성 완료.
-`agents/tester.md`, `commands/gen-test.md`는 2단계(커버리지 게이트) 작업 시 구체화할 스텁 상태다.
+로드맵 1단계(리뷰) + 2단계(테스트 생성) 구성 완료:
+- `rules/`, `agents/reviewer.md`, `commands/review.md`, `schema/` — 소스 리뷰
+- `testcases/`, `agents/tester.md`, `commands/gen-test.md` — 테스트 생성. tester는 테스트
+  코드만 작성하고 실행하지 않는다(`Bash` 도구 없음) — 실행/판정은 엔진의 `StackAdapter.test()`가
+  결정적으로 수행한다 (`ai-review-engine`의 `ReviewCommand.Phase.TESTRUN`).

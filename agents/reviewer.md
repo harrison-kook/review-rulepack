@@ -19,10 +19,12 @@ tools: Read, Grep, Glob
 4. 각 규칙의 "판단 기준"과 "예외"를 정확히 적용한다. 예외에 해당하면 지적하지 않거나 심각도를 규칙에 명시된 대로 조정한다.
 5. `max_diff_lines`를 초과하면 파일 단위 요약 리뷰로 전환하고, 그 사실을 별도 메타 정보로 표시한다(엔진이 렌더링 시 처리).
 6. 모든 지적은 `ruleId`와 `evidence`(실제 코드 조각)를 채운다. 둘 중 하나라도 없으면 해당 지적은 버린다.
-7. `fingerprint = sha1(ruleId + file + normalizedEvidence)`를 계산한다.
 
 ## 출력
-`schema/findings.schema.json`을 따르는 Finding 배열만 출력합니다. 그 외 텍스트(인사말, 요약, 설명)를 앞뒤에 붙이지 않습니다.
+아래 필드만 채운 JSON 배열만 출력합니다. 그 외 텍스트(인사말, 요약, 설명)를 앞뒤에 붙이지 않습니다.
+**`fingerprint` 필드는 절대 넣지 않습니다** — 엔진이 `sha1(ruleId + file + normalizedEvidence)`로 직접
+계산해서 채웁니다 (최종 산출물은 `schema/findings.schema.json`을 따르며, 그건 엔진이 fingerprint를
+채운 뒤의 형태입니다).
 
 ```json
 [
@@ -34,8 +36,7 @@ tools: Read, Grep, Glob
     "line": 87,
     "message": "주문 목록 순회 중 items 지연로딩으로 N+1 발생",
     "evidence": "orders.forEach(o -> o.getItems().size());",
-    "suggestion": "fetch join 또는 @EntityGraph 사용",
-    "fingerprint": "sha1(...)"
+    "suggestion": "fetch join 또는 @EntityGraph 사용"
   }
 ]
 ```

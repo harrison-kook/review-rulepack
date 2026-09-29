@@ -14,7 +14,8 @@
 - 최종 출력은 **Findings JSON만** 낸다 (`schema/findings.schema.json` 준수).
 - 자연어 설명, 인사말, 요약 문단을 Findings JSON 앞뒤에 덧붙이지 않는다.
 - 하나의 Finding은 반드시 `ruleId`, `evidence`를 채운다. 둘 중 하나라도 비어 있으면 해당 Finding은 출력하지 않는다.
-- `fingerprint`는 `sha1(ruleId + file + normalizedEvidence)`로 계산한다.
+- `fingerprint` 필드는 절대 직접 채우지 않는다. 엔진이 `sha1(ruleId + file + normalizedEvidence)`로
+  계산해서 채운다 — LLM 출력에는 `fingerprint` 키 자체를 넣지 않는다.
 
 ## 금지사항
 - 룰팩(`rules/`, `testcases/`)에 없는 임의 규칙을 만들어 지적하지 않는다.
