@@ -73,6 +73,24 @@ overrides:
   TEAM-002: { severity: MEDIUM } # TEAM-002는 LOW 대신 MEDIUM으로 취급
 ```
 
+### 특정 레포에만 해당하는 민감한 규칙 — 레포 로컬 규칙
+
+이 저장소(`review-rulepack`)는 public이라 여기 두는 규칙은 전부 공개된다. 그 레포에만
+해당하고 여러 레포가 공유할 필요 없는 민감한 내부 정책(예: 특정 회사 내부 시스템 연동
+규칙)이라면, 이 저장소가 아니라 **대상 레포 자체 안에** 둔다. `ai-review-engine`이
+자동으로 인식하는 고정 경로다 — 대상 레포에 파일만 추가하면 된다(`.review.yml` 설정 불필요):
+
+```
+<대상 레포>/.review-rules/
+├── rules/*.md        # 이 rulepack의 rules/*.md와 형식 동일
+└── testcases/*.md
+```
+
+레포 로컬 규칙은 병합 순서상 가장 마지막(`common → 스택 → domain → team → 레포 로컬 →
+.review.yml overrides`)이라, 같은 규칙 ID를 다시 정의하면 이 저장소의 규칙을 덮어쓴다.
+대상 레포가 private이면 그 레포의 접근 권한이 곧 이 규칙의 접근 권한이 된다 — 별도 private
+저장소나 시크릿을 관리할 필요가 없다.
+
 ### 여러 팀이 서로 다른 컨벤션을 쓸 때
 
 `rules/team/`은 디렉터리 하나뿐이라 팀마다 컨벤션이 다르면 그대로 쓸 수 없다. 이 경우
